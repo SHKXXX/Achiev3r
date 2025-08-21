@@ -23,11 +23,12 @@ import { Button } from "./components/DemoComponents";
 import { Icon } from "./components/DemoComponents";
 import { Home } from "./components/DemoComponents";
 import { Features } from "./components/DemoComponents";
+import { Community } from "./components/Community";
 
 export default function App() {
   const { setFrameReady, isFrameReady, context } = useMiniKit();
   const [frameAdded, setFrameAdded] = useState(false);
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState<"home" | "features" | "community" | "goals">("community");
 
   const addFrame = useAddFrame();
   const openUrl = useOpenUrl();
@@ -72,7 +73,7 @@ export default function App() {
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-[var(--app-foreground)] mini-app-theme from-[var(--app-background)] to-[var(--app-gray)]">
-      <div className="w-full max-w-md mx-auto px-4 py-3">
+      <div className="w-full max-w-md mx-auto px-4 py-3 pb-24">
         <header className="flex justify-between items-center mb-3 h-11">
           <div>
             <div className="flex items-center space-x-2">
@@ -98,6 +99,8 @@ export default function App() {
         <main className="flex-1">
           {activeTab === "home" && <Home setActiveTab={setActiveTab} />}
           {activeTab === "features" && <Features setActiveTab={setActiveTab} />}
+          {activeTab === "community" && <Community title="Community" initialTab="all" />}
+          {activeTab === "goals" && <Community title="My Goals" initialTab="mine" />}
         </main>
 
         <footer className="mt-2 pt-4 flex justify-center">
@@ -111,6 +114,37 @@ export default function App() {
           </Button>
         </footer>
       </div>
+
+      <nav className="fixed bottom-3 left-0 right-0">
+        <div className="w-full max-w-md mx-auto px-4">
+          <div className="bg-[var(--app-card-bg)] backdrop-blur-md border border-[var(--app-card-border)] rounded-2xl shadow-lg p-2 flex justify-around">
+            <button
+              type="button"
+              onClick={() => setActiveTab("home")}
+              className={`flex flex-col items-center px-3 py-1 rounded-xl ${activeTab === "home" ? "text-[var(--app-accent)]" : "text-[var(--app-foreground-muted)]"}`}
+            >
+              <Icon name="home" />
+              <span className="text-xs mt-1">Home</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("community")}
+              className={`flex flex-col items-center px-3 py-1 rounded-xl ${activeTab === "community" ? "text-[var(--app-accent)]" : "text-[var(--app-foreground-muted)]"}`}
+            >
+              <Icon name="users" />
+              <span className="text-xs mt-1">Community</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("goals")}
+              className={`flex flex-col items-center px-3 py-1 rounded-xl ${activeTab === "goals" ? "text-[var(--app-accent)]" : "text-[var(--app-foreground-muted)]"}`}
+            >
+              <Icon name="target" />
+              <span className="text-xs mt-1">Goals</span>
+            </button>
+          </div>
+        </div>
+      </nav>
     </div>
   );
 }

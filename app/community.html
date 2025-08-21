@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoalTracker - Community</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: #333;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 24px;
+            color: #3a57e8;
+        }
+        
+        .wallet {
+            background-color: #3a57e8;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: #eef0f8;
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .goal-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .goal-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #eef0f8;
+        }
+        
+        .goal-info {
+            flex: 1;
+        }
+        
+        .goal-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .goal-date {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .goal-stake {
+            background-color: #f2f6ff;
+            color: #3a57e8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .goal-category {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+            padding-left: 52px; /* Align with title */
+        }
+        
+        .progress-container {
+            margin-bottom: 16px;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .progress-percent {
+            font-weight: 700;
+            color: #3a57e8;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #eef0f8;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #3a57e8;
+            border-radius: 4px;
+        }
+        
+        .goal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .time-left {
+            font-size: 14px;
+            color: #e65c5c;
+            font-weight: 600;
+        }
+        
+        .share-btn {
+            background-color: #f2f6ff;
+            color: #3a57e8;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 16px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: #3a57e8;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .tab-content {
+            display: none;
+            margin-bottom: 80px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: #999;
+        }
+        
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+            color: #ccc;
+        }
+        
+        .win-chance, .potential-reward {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3a57e8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Achiev3r</div>
+        <div class="wallet">
+            <i class="fas fa-wallet"></i>
+            <span>420 GC</span>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <div class="tab active" data-tab="others">Others' Goals</div>
+        <div class="tab" data-tab="my">My Goals</div>
+        <div class="tab" data-tab="following">Following</div>
+    </div>
+    
+    <div class="tab-content active" id="others-content">
+        <div class="goal-card">
+            <div class="goal-header">
+                <div class="goal-user">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                    <div class="goal-info">
+                        <div class="goal-title">Run a Marathon</div>
+                        <div class="goal-date">By 15th August</div>
+                    </div>
+                </div>
+                <div class="goal-stake">
+                    <i class="fas fa-coins"></i> 150 GC
+                </div>
+            </div>
+            <div class="goal-category">Fitness</div>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div class="progress-text">Progress</div>
+                    <div class="progress-percent">45%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 45%"></div>
+                </div>
+            </div>
+            <div class="goal-footer">
+                <div class="time-left">12 Days Left</div>
+                <button class="share-btn">
+                    <i class="fas fa-share-alt"></i> Share Poll
+                </button>
+            </div>
+        </div>
+        
+        <div class="goal-card">
+            <div class="goal-header">
+                <div class="goal-user">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                    <div class="goal-info">
+                        <div class="goal-title">Learn Spanish</div>
+                        <div class="goal-date">By 30th September</div>
+                    </div>
+                </div>
+                <div class="goal-stake">
+                    <i class="fas fa-coins"></i> 200 GC
+                </div>
+            </div>
+            <div class="goal-category">Education</div>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div class="progress-text">Progress</div>
+                    <div class="progress-percent">30%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 30%"></div>
+                </div>
+            </div>
+            <div class="goal-footer">
+                <div class="time-left">23 Days Left</div>
+                <button class="share-btn">
+                    <i class="fas fa-share-alt"></i> Share Poll
+                </button>
+            </div>
+        </div>
+        
+        <div class="goal-card">
+            <div class="goal-header">
+                <div class="goal-user">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                    <div class="goal-info">
+                        <div class="goal-title">Write a Book</div>
+                        <div class="goal-date">By 1st December</div>
+                    </div>
+                </div>
+                <div class="goal-stake">
+                    <i class="fas fa-coins"></i> 500 GC
+                </div>
+            </div>
+            <div class="goal-category">Creative</div>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div class="progress-text">Progress</div>
+                    <div class="progress-percent">15%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 15%"></div>
+                </div>
+            </div>
+            <div class="goal-footer">
+                <div class="time-left">40 Days Left</div>
+                <button class="share-btn">
+                    <i class="fas fa-share-alt"></i> Share Poll
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-content" id="my-content">
+        <div class="goal-card">
+            <div class="goal-header">
+                <div class="goal-user">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                    <div class="goal-info">
+                        <div class="goal-title">Lose 5kg</div>
+                        <div class="goal-date">By 30th June</div>
+                    </div>
+                </div>
+                <div class="goal-stake">
+                    <i class="fas fa-coins"></i> 100 GC
+                </div>
+            </div>
+            <div class="goal-category">Fitness</div>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div class="progress-text">Progress</div>
+                    <div class="progress-percent">90%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 90%"></div>
+                </div>
+            </div>
+            <div class="goal-footer">
+                <div class="time-left">5 Days Left</div>
+                <div class="win-chance">Win Chance: 85%</div>
+            </div>
+        </div>
+        
+        <div class="goal-card">
+            <div class="goal-header">
+                <div class="goal-user">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                    <div class="goal-info">
+                        <div class="goal-title">Creating Mobile App Design</div>
+                        <div class="goal-date">By 5th July</div>
+                    </div>
+                </div>
+                <div class="goal-stake">
+                    <i class="fas fa-coins"></i> 250 GC
+                </div>
+            </div>
+            <div class="goal-category">UI/UX Design</div>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div class="progress-text">Progress</div>
+                    <div class="progress-percent">75%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 75%"></div>
+                </div>
+            </div>
+            <div class="goal-footer">
+                <div class="time-left">3 Days Left</div>
+                <div class="win-chance">Win Chance: 70%</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-content" id="following-content">
+        <div class="goal-card">
+            <div class="goal-header">
+                <div class="goal-user">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                    <div class="goal-info">
+                        <div class="goal-title">Read 12 Books</div>
+                        <div class="goal-date">By 31st December</div>
+                    </div>
+                </div>
+                <div class="goal-stake">
+                    <i class="fas fa-coins"></i> 180 GC
+                </div>
+            </div>
+            <div class="goal-category">Education</div>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div class="progress-text">Progress</div>
+                    <div class="progress-percent">65%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                </div>
+            </div>
+            <div class="goal-footer">
+                <div class="time-left">18 Days Left</div>
+                <div class="potential-reward">Potential Reward: 25 GC</div>
+            </div>
+        </div>
+        
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="far fa-compass"></i>
+            </div>
+            <p>You're not following any other goals yet</p>
+            <p>Share polls on others' goals to start earning rewards</p>
+        </div>
+    </div>
+    
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <div>Home</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon"><i class="fas fa-users"></i></div>
+            <div>Community</div>
+        </div>
+        <div class="nav-item">
+            <a href="goals.html">
+                <div class="nav-icon"><i class="fas fa-bullseye"></i></div>
+                <div>Goals</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-content`).classList.add('active');
+            });
+        });
+        
+        // Simulate loading more goals when scrolling
+        window.addEventListener('scroll', () => {
+            const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = window.scrollY;
+            
+            if (scrolled > scrollable - 100) {
+                // In a real app, this would load more goals from an API
+                console.log("Load more goals...");
+            }
+        });
+    </script>
+</body>
+</html>

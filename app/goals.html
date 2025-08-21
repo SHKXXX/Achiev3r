@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoalTracker - My Goals</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: #333;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 24px;
+            color: #3a57e8;
+        }
+        
+        .wallet {
+            background-color: #3a57e8;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .goal-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .goal-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #eef0f8;
+        }
+        
+        .goal-info {
+            flex: 1;
+        }
+        
+        .goal-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .goal-date {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .goal-stake {
+            background-color: #f2f6ff;
+            color: #3a57e8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .goal-category {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+            padding-left: 52px; /* Align with title */
+        }
+        
+        .progress-container {
+            margin-bottom: 16px;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .progress-percent {
+            font-weight: 700;
+            color: #3a57e8;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #eef0f8;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #3a57e8;
+            border-radius: 4px;
+        }
+        
+        .goal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .time-left {
+            font-size: 14px;
+            color: #e65c5c;
+            font-weight: 600;
+        }
+        
+        .share-btn {
+            background-color: #f2f6ff;
+            color: #3a57e8;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 16px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: #3a57e8;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .add-goal-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #3a57e8;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(58, 87, 232, 0.3);
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .add-icon {
+            font-size: 24px;
+        }
+        
+        /* Modal styles for goal details */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .detail-item {
+            margin-bottom: 16px;
+        }
+        
+        .detail-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .pool-info {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f2f6ff;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 16px 0;
+        }
+        
+        .pool-item {
+            text-align: center;
+        }
+        
+        .pool-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #3a57e8;
+        }
+        
+        .pool-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .progress-circle {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .circle-bg {
+            fill: none;
+            stroke: #eef0f8;
+            stroke-width: 8;
+        }
+        
+        .circle-progress {
+            fill: none;
+            stroke: #3a57e8;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.3s;
+        }
+        
+        .circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            font-weight: 700;
+            color: #3a57e8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">GoalTracker</div>
+        <div class="wallet">
+            <i class="fas fa-wallet"></i>
+            <span>420 GC</span>
+        </div>
+    </div>
+    
+    <div class="page-title">My Goals</div>
+    
+    <div class="goals-list">
+        <div class="goal-card" data-goal-id="1">
+            <div class="goal-header">
+                <div class="goal-user">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                    <div class="goal-info">
+                        <div class="goal-title">Lose 5kg</div>
+                        <div class="goal-date">By 30th June</div>
+                    </div>
+                </div>
+                <div class="goal-stake">
+                    <i class="fas fa-coins"></i> 100 GC
+                </div>
+            </div>
+            <div class="goal-category">Fitness</div>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div class="progress-text">Progress</div>
+                    <div class="progress-percent">90%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 90%"></div>
+                </div>
+            </div>
+            <div class="goal-footer">
+                <div class="time-left">5 Days Left</div>
+                <button class="share-btn">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+            </div>
+        </div>
+        
+        <div class="goal-card" data-goal-id="2">
+            <div class="goal-header">
+                <div class="goal-user">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                    <div class="goal-info">
+                        <div class="goal-title">Creating Mobile App Design</div>
+                        <div class="goal-date">By 5th July</div>
+                    </div>
+                </div>
+                <div class="goal-stake">
+                    <i class="fas fa-coins"></i> 250 GC
+                </div>
+            </div>
+            <div class="goal-category">UI/UX Design</div>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div class="progress-text">Progress</div>
+                    <div class="progress-percent">75%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 75%"></div>
+                </div>
+            </div>
+            <div class="goal-footer">
+                <div class="time-left">3 Days Left</div>
+                <button class="share-btn">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+            </div>
+        </div>
+        
+        <div class="goal-card" data-goal-id="3">
+            <div class="goal-header">
+                <div class="goal-user">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                    <div class="goal-info">
+                        <div class="goal-title">Read 10 Books</div>
+                        <div class="goal-date">By 31st December</div>
+                    </div>
+                </div>
+                <div class="goal-stake">
+                    <i class="fas fa-coins"></i> 150 GC
+                </div>
+            </div>
+            <div class="goal-category">Education</div>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div class="progress-text">Progress</div>
+                    <div class="progress-percent">40%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 40%"></div>
+                </div>
+            </div>
+            <div class="goal-footer">
+                <div class="time-left">120 Days Left</div>
+                <button class="share-btn">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="add-goal-btn">
+        <i class="fas fa-plus add-icon"></i>
+    </div>
+    
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <div>Home</div>
+        </div>
+        <div class="nav-item">
+            <a href="community.html">
+                <div class="nav-icon"><i class="fas fa-users"></i></div>
+                <div>Community</div>
+            </a>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon"><i class="fas fa-bullseye"></i></div>
+            <div>Goals</div>
+        </div>
+    </div>
+    
+    <!-- Goal Detail Modal -->
+    <div class="modal" id="goalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Goal Details</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            
+            <div class="goal-details">
+                <div class="detail-item">
+                    <div class="detail-label">Goal Title</div>
+                    <div class="detail-value" id="modal-goal-title">Lose 5kg</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Category</div>
+                    <div class="detail-value" id="modal-goal-category">Fitness</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Start Date</div>
+                    <div class="detail-value" id="modal-start-date">June 1, 2023</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">End Date</div>
+                    <div class="detail-value" id="modal-end-date">June 30, 2023</div>
+                </div>
+                
+                <div class="progress-circle">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="40"></circle>
+                        <circle class="circle-progress" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="25.12"></circle>
+                    </svg>
+                    <div class="circle-text">90%</div>
+                </div>
+                
+                <div class="pool-info">
+                    <div class="pool-item">
+                        <div class="pool-amount">100 GC</div>
+                        <div class="pool-label">Initial Stake</div>
+                    </div>
+                    <div class="pool-item">
+                        <div class="pool-amount">120 GC</div>
+                        <div class="pool-label">Current Value</div>
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-value">Lose 5kg through a combination of diet and exercise. Tracking progress weekly with weigh-ins.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Open goal details modal when a goal card is clicked
+        document.querySelectorAll('.goal-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Don't open modal if share button was clicked
+                if (e.target.closest('.share-btn')) return;
+                
+                const goalId = card.getAttribute('data-goal-id');
+                openGoalModal(goalId);
+            });
+        });
+        
+        // Close modal when close button is clicked
+        document.querySelector('.close-btn').addEventListener('click', () => {
+            document.getElementById('goalModal').style.display = 'none';
+        });
+        
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('goalModal')) {
+                document.getElementById('goalModal').style.display = 'none';
+            }
+        });
+        
+        // Function to open goal modal with data
+        function openGoalModal(goalId) {
+            // In a real app, this would fetch data from an API based on goalId
+            // For demo purposes, we're using static data
+            
+            let goalData;
+            
+            switch(goalId) {
+                case '1':
+                    goalData = {
+                        title: 'Lose 5kg',
+                        category: 'Fitness',
+                        startDate: 'June 1, 2023',
+                        endDate: 'June 30, 2023',
+                        progress: 90,
+                        initialStake: '100 GC',
+                        currentValue: '120 GC',
+                        description: 'Lose 5kg through a combination of diet and exercise. Tracking progress weekly with weigh-ins.'
+                    };
+                    break;
+                case '2':
+                    goalData = {
+                        title: 'Creating Mobile App Design',
+                        category: 'UI/UX Design',
+                        startDate: 'May 15, 2023',
+                        endDate: 'July 5, 2023',
+                        progress: 75,
+                        initialStake: '250 GC',
+                        currentValue: '280 GC',
+                        description: 'Design a complete mobile app interface with 20+ screens including user flows and prototypes.'
+                    };
+                    break;
+                case '3':
+                    goalData = {
+                        title: 'Read 10 Books',
+                        category: 'Education',
+                        startDate: 'January 1, 2023',
+                        endDate: 'December 31, 2023',
+                        progress: 40,
+                        initialStake: '150 GC',
+                        currentValue: '165 GC',
+                        description: 'Read 10 books across different genres including fiction, non-fiction, and self-improvement.'
+                    };
+                    break;
+            }
+            
+            // Update modal with goal data
+            document.getElementById('modal-goal-title').textContent = goalData.title;
+            document.getElementById('modal-goal-category').textContent = goalData.category;
+            document.getElementById('modal-start-date').textContent = goalData.startDate;
+            document.getElementById('modal-end-date').textContent = goalData.endDate;
+            document.querySelector('.circle-text').textContent = goalData.progress + '%';
+            
+            // Update progress circle
+            const circumference = 251.2; // 2 * π * r (where r=40)
+            const offset = circumference - (goalData.progress / 100 * circumference);
+            document.querySelector('.circle-progress').style.strokeDashoffset = offset;
+            
+            // Update pool values
+            document.querySelectorAll('.pool-amount')[0].textContent = goalData.initialStake;
+            document.querySelectorAll('.pool-amount')[1].textContent = goalData.currentValue;
+            
+            // Show the modal
+            document.getElementById('goalModal').style.display = 'flex';
+        }
+        
+        // Share button functionality
+        document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the card click event
+                alert('Sharing this goal with the community for monitoring!');
+                // In a real app, this would trigger a share dialog or API call
+            });
+        });
+        
+        // Add new goal button
+        document.querySelector('.add-goal-btn').addEventListener('click', () => {
+            alert('Add new goal functionality would open here!');
+            // In a real app, this would open a form to create a new goal
+        });
+    </script>
+</body>
+</html>

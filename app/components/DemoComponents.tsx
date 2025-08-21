@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import {
@@ -112,7 +113,7 @@ function Card({
 }
 
 type FeaturesProps = {
-  setActiveTab: (tab: string) => void;
+  setActiveTab: React.Dispatch<React.SetStateAction<"home" | "features" | "community" | "goals">>;
 };
 
 export function Features({ setActiveTab }: FeaturesProps) {
@@ -154,7 +155,7 @@ export function Features({ setActiveTab }: FeaturesProps) {
 }
 
 type HomeProps = {
-  setActiveTab: (tab: string) => void;
+  setActiveTab: React.Dispatch<React.SetStateAction<"home" | "features" | "community" | "goals">>;
 };
 
 export function Home({ setActiveTab }: HomeProps) {
@@ -179,8 +180,10 @@ export function Home({ setActiveTab }: HomeProps) {
   );
 }
 
+export type IconName = "heart" | "star" | "check" | "plus" | "arrow-right" | "home" | "users" | "target";
+
 type IconProps = {
-  name: "heart" | "star" | "check" | "plus" | "arrow-right";
+  name: IconName;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
@@ -270,7 +273,58 @@ export function Icon({ name, size = "md", className = "" }: IconProps) {
         <polyline points="12 5 19 12 12 19" />
       </svg>
     ),
-  };
+    home: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <title>Home</title>
+        <path d="M3 9.5l9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" />
+        <path d="M9 22V12h6v10" />
+      </svg>
+    ),
+    users: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <title>Users</title>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+    target: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <title>Target</title>
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="6" />
+        <circle cx="12" cy="12" r="2" />
+      </svg>
+    ),
+  } as const;
 
   return (
     <span className={`inline-block ${sizeClasses[size]} ${className}`}>
