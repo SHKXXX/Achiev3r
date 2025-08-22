@@ -184,7 +184,6 @@ export default function App() {
               onClick={() => setActiveTab("home")}
               className={`flex flex-col items-center px-3 py-1 rounded-xl ${activeTab === "home" ? "text-[var(--app-accent)]" : "text-[var(--app-foreground-muted)]"}`}
             >
-              <Icon name="home" />
               <span className="text-xs mt-1">Home</span>
             </button>
             <button
@@ -192,7 +191,6 @@ export default function App() {
               onClick={() => setActiveTab("community")}
               className={`flex flex-col items-center px-3 py-1 rounded-xl ${activeTab === "community" ? "text-[var(--app-accent)]" : "text-[var(--app-foreground-muted)]"}`}
             >
-              <Icon name="users" />
               <span className="text-xs mt-1">Community</span>
             </button>
             <button
@@ -200,7 +198,6 @@ export default function App() {
               onClick={() => setActiveTab("goals")}
               className={`flex flex-col items-center px-3 py-1 rounded-xl ${activeTab === "goals" ? "text-[var(--app-accent)]" : "text-[var(--app-foreground-muted)]"}`}
             >
-              <Icon name="target" />
               <span className="text-xs mt-1">Goals</span>
             </button>
           </div>
