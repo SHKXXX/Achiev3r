@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import './Home.css';
-import type { User } from '../../lib/generated/prisma'; // adjust path if needed
+import type { User } from '../lib/generated/prisma'; // adjust path if needed
 import {
   Name,
   Identity,
@@ -12,13 +12,15 @@ import {
   getName,
   getAvatar,
 } from "@coinbase/onchainkit/identity";
+import { base } from 'viem/chains'; // base is pre-defined Chain object
 
 interface HomeProps {
+setActiveTab: Dispatch<SetStateAction<string>>;
   user: User | null;
 }
 
 
-const Home: React.FC<HomeProps> = ({ user }) => {
+const Home: React.FC<HomeProps> = ({ setActiveTab, user }) => {
   const [energyLevel, setEnergyLevel] = useState(7);
   const [notes, setNotes] = useState("Need to complete my workout routine and work on the app design for at least 2 hours.");
   const [showModal, setShowModal] = useState(false);
@@ -35,7 +37,7 @@ useEffect(() => {
 
     const name = await getName({
       address,
-      chain: { id: 8453, name: "Base" },
+      chain: base,
     }).catch(() => null);
 
     setEnsName(name);

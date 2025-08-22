@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import type { User } from '../../lib/generated/prisma';
+import type { User } from '../lib/generated/prisma';
 import './Goals.css'; 
 import {
   Transaction,
@@ -16,7 +16,7 @@ import {
   TransactionStatusLabel,
   TransactionStatus,
 } from "@coinbase/onchainkit/transaction";
-import { useNotification, useAccount } from "@coinbase/onchainkit/minikit";
+import { useNotification} from "@coinbase/onchainkit/minikit";
 
 interface Goal {
   id: string;
@@ -105,7 +105,7 @@ const Goals: React.FC<GoalsProps> = ({ user }) => {
   const calls = useMemo(() => address
     ? [
         {
-          to: address, // Sending to self for testing
+          to: address as `0x${string}`, // Sending to self for testing
           data: "0x" as `0x${string}`,
           value: BigInt(0), // 0 ETH for testing
         },

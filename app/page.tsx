@@ -28,7 +28,8 @@ import { Features } from "./components/DemoComponents";
 import Goals  from "./components/Goals";
 import Home  from "./components/Home";
 import Community  from "./components/Community";
-import type { User } from '../lib/generated/prisma'; // adjust path if needed
+import type { User } from './lib/generated/prisma'; // adjust path if needed
+import { base } from 'viem/chains'; // base is pre-defined Chain object
 
 export default function App() {
   const { setFrameReady, isFrameReady, context } = useMiniKit();
@@ -50,14 +51,14 @@ export default function App() {
       if (!walletAddress) return;
 
       // Get ENS name
-      const username = await getName({ address: walletAddress, chain: { id: 8453, name: "Base" },}).catch(() => undefined);
+      const username = await getName({ address: walletAddress, chain: base,}).catch(() => undefined);
       console.log("Wallet:", walletAddress);  
       console.log("Fetched name:", username); 
       // Get avatar (only if username exists)
       const profileImage = username
         ? await getAvatar({
             ensName: username,
-            chain: { id: 8453, name: "Base" }, // Base chain
+            chain: base, // Base chain
           }).catch(() => undefined)
         : undefined;
 

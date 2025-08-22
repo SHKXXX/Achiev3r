@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
 import './Community.css';
-import { useAccount } from "@coinbase/onchainkit/minikit";
 
 interface Goal {
   id: string;
@@ -21,6 +20,7 @@ interface Goal {
 }
 
 interface CommunityProps {
+setActiveTab: Dispatch<SetStateAction<string>>;
   user?: any; // You might want to define a proper user type
 }
 
