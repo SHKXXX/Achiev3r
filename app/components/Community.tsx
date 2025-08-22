@@ -242,7 +242,7 @@ const Community: React.FC<CommunityProps> = ({ user }) => {
   }
 };
 
-      // API request to update likes
+  
       
   const getSampleGoals = (tab: string): Goal[] => {
     switch(tab) {
