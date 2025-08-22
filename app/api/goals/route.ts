@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       endDate,
     } = body;
 
-    if (!userId || !title || !category || !stake) {
+    if (!userId || !title || !category) { //modified, removed stake
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -65,5 +65,21 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("Error fetching goals:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const goalId = params.id;
+
+    const updated = await prisma.goal.update({
+      where: { id: goalId },
+      data: { isPublic: true },
+    });
+
+    return NextResponse.json({ goal: updated }, { status: 200 });
+  } catch (error) {
+    console.error("Error sharing goal:", error);
+    return NextResponse.json({ error: "Failed to share goal" }, { status: 500 });
   }
 }

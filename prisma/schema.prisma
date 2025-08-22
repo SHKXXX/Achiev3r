@@ -25,6 +25,7 @@ model User {
   goals        Goal[]       // links to Goal.user
   posts        Post[]       // links to Post.user
   participants Participant[] // links to Participant.user
+  follows      GoalFollow[]
 }
 
 
@@ -43,8 +44,23 @@ model Goal {
   prizeClaimed  Boolean       @default(false)
   verifications Verification[]
   createdAt     DateTime      @default(now())
+  isPublic Boolean @default(false) // Add this field
 
+  followers GoalFollow[]
   user          User          @relation(fields: [userId], references: [id])
+  
+}
+
+model GoalFollow {
+  id        String   @id @default(cuid())
+  userId    String
+  goalId    String
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, goalId])
 }
 
 model Verification {

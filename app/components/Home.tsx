@@ -1,14 +1,49 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import './Home.css';
+import type { User } from '../../lib/generated/prisma'; // adjust path if needed
+import {
+  Name,
+  Identity,
+  Address,
+  Avatar,
+  EthBalance,
+  getAddress,
+  getName,
+  getAvatar,
+} from "@coinbase/onchainkit/identity";
 
-const Home: React.FC = () => {
+interface HomeProps {
+  user: User | null;
+}
+
+
+const Home: React.FC<HomeProps> = ({ user }) => {
   const [energyLevel, setEnergyLevel] = useState(7);
   const [notes, setNotes] = useState("Need to complete my workout routine and work on the app design for at least 2 hours.");
   const [showModal, setShowModal] = useState(false);
   const [saveStatus, setSaveStatus] = useState('Save Notes');
   const [currentDate, setCurrentDate] = useState('');
   const [dayOfWeek, setDayOfWeek] = useState('');
+  const [ensName, setEnsName] = useState<string | null>(null);
+
+useEffect(() => {
+  if (!user?.fid) return;
+
+  const fetchEnsName = async () => {
+    const address = user.fid as `0x${string}`;
+
+    const name = await getName({
+      address,
+      chain: { id: 8453, name: "Base" },
+    }).catch(() => null);
+
+    setEnsName(name);
+  };
+
+  fetchEnsName();
+}, [user]);
+
 
   useEffect(() => {
     // Set current date
@@ -56,7 +91,7 @@ const Home: React.FC = () => {
             alt="Profile" 
           />
           <div className="profile-info">
-            <h2>Sarah Johnson</h2>
+            <h2>{ensName ?? user?.username ?? "Guest"}</h2>
             <p>Welcome back!</p>
           </div>
         </div>

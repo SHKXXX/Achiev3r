@@ -1,8 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import type { User } from '../../lib/generated/prisma'; // adjust path if needed
-import './Goals.css'; // We'll extract the CSS to a separate file
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import type { User } from '../../lib/generated/prisma';
+import './Goals.css'; 
+import {
+  Transaction,
+  TransactionButton,
+  TransactionToast,
+  TransactionToastAction,
+  TransactionToastIcon,
+  TransactionToastLabel,
+  TransactionError,
+  TransactionResponse,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+  TransactionStatus,
+} from "@coinbase/onchainkit/transaction";
+import { useNotification, useAccount } from "@coinbase/onchainkit/minikit";
 
 interface Goal {
   id: string;
@@ -16,7 +30,6 @@ interface Goal {
   currentValue?: number;
 }
 
-//modified
 interface GoalsProps {
   title?: string;
   initialTab?: string;
@@ -37,7 +50,12 @@ const Goals: React.FC<GoalsProps> = ({ user }) => {
     stake: 0,
     category: "",
   });
-   const userId = user?.id;
+  const [showTransaction, setShowTransaction] = useState(false);
+  const [transactionData, setTransactionData] = useState<any>(null);
+  
+  const userId = user?.id;
+  const address  = user?.fid; //modified
+  const sendNotification = useNotification();
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -48,7 +66,7 @@ const Goals: React.FC<GoalsProps> = ({ user }) => {
   useEffect(() => {
     if (!userId) return;
 
- const fetchGoals = async () => {
+    const fetchGoals = async () => {
       try {
         const res = await fetch(`/api/goals?userId=${userId}`);
         if (res.ok) {
@@ -74,12 +92,6 @@ const Goals: React.FC<GoalsProps> = ({ user }) => {
     fetchGoals();
   }, [userId]);
 
-
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    setNewGoal(prev => ({ ...prev, startDate: today }));
-  }, []);
-
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
   };
@@ -89,47 +101,106 @@ const Goals: React.FC<GoalsProps> = ({ user }) => {
     setNewGoal(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!userId) {
-    alert("User session not found! Please connect your wallet.");
-    return;
-  }
+  // Transaction calls for creating a goal
+  const calls = useMemo(() => address
+    ? [
+        {
+          to: address, // Sending to self for testing
+          data: "0x" as `0x${string}`,
+          value: BigInt(0), // 0 ETH for testing
+        },
+      ]
+    : [], [address]);
 
-  const goalData = {
-    userId,
-    title: newGoal.title,
-    description: newGoal.description,
-    category: selectedCategory,
-    stake: Number(newGoal.stake),
-    startDate: newGoal.startDate,
-    endDate: newGoal.endDate,
+  const handleTransactionSuccess = useCallback(async (response: TransactionResponse) => {
+    const transactionHash = response.transactionReceipts[0].transactionHash;
+
+    console.log(`Transaction successful: ${transactionHash}`);
+
+    // Now create the goal after successful transaction
+    await createGoal();
+    
+    await sendNotification({
+      title: "Goal Created!",
+      body: `Your goal "${newGoal.title}" has been created successfully!`,
+    });
+    
+    setShowTransaction(false);
+  }, [newGoal, sendNotification]);
+
+  const handleTransactionError = useCallback((error: TransactionError) => {
+    console.error("Transaction failed:", error);
+    alert("Transaction failed. Please try again.");
+    setShowTransaction(false);
+  }, []);
+
+  const createGoal = async () => {
+    if (!userId) {
+      alert("User session not found! Please connect your wallet.");
+      return;
+    }
+
+    const goalData = {
+      userId,
+      title: newGoal.title,
+      description: newGoal.description,
+      category: selectedCategory,
+      stake: Number(newGoal.stake),
+      startDate: newGoal.startDate,
+      endDate: newGoal.endDate,
+    };
+
+    const response = await fetch("/api/goals", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(goalData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setGoals((prev) => [data.goal, ...prev]);
+      setShowAddModal(false);
+      setNewGoal({
+        title: "",
+        description: "",
+        startDate: new Date().toISOString().split("T")[0],
+        endDate: "",
+        stake: 0,
+        category: "",
+      });
+      setSelectedCategory("");
+    } else {
+      alert(data.error || "Failed to create goal");
+    }
   };
 
-  const response = await fetch("/api/goals", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(goalData),
-  });
-
-  const data = await response.json();
-
-  if (response.ok) {
-    setGoals((prev) => [data.goal, ...prev]);
-    setShowAddModal(false);
-    setNewGoal({
-      title: "",
-      description: "",
-      startDate: new Date().toISOString().split("T")[0],
-      endDate: "",
-      stake: 0,
-      category: "",
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (!newGoal.title || !newGoal.description || !selectedCategory || !newGoal.stake) {
+      alert("Please fill in all required fields");
+      return;
+    }
+    
+    if (!address) {
+      alert("Please connect your wallet to create a goal");
+      return;
+    }
+    
+    if (Number(newGoal.stake)===0){
+      createGoal();
+    }else {
+        // Show transaction UI instead of immediately creating the goal
+    setShowTransaction(true);
+    setTransactionData({
+      title: newGoal.title,
+      stake: newGoal.stake
     });
-    setSelectedCategory("");
-  } else {
-    alert(data.error || "Failed to create goal");
-  }
-};
+    }
+
+  };
 
   const openGoalModal = (goal: Goal) => {
     setSelectedGoal(goal);
@@ -206,15 +277,32 @@ const Goals: React.FC<GoalsProps> = ({ user }) => {
               </div>
               <div className="goal-footer">
                 <div className="time-left">{calculateDaysLeft(goal.endDate)} Days Left</div>
-                <button 
-                  className="share-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    alert('Sharing this goal with the community for monitoring!');
-                  }}
-                >
-                  <i className="fas fa-share-alt"></i> Share
-                </button>
+<button 
+  className="share-btn"
+  onClick={async (e) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch(`/api/goals/${goal.id}/share`, {
+        method: "PATCH",
+      });
+      if (res.ok) {
+        alert("Goal is now shared with the community!");
+        // Optionally: refresh state so UI updates
+        const data = await res.json();
+        setGoals(prev =>
+          prev.map(g => g.id === goal.id ? { ...g, isPublic: true } : g)
+        );
+      } else {
+        alert("Failed to share goal");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    }
+  }}
+>
+  <i className="fas fa-share-alt"></i> Share
+</button>
               </div>
             </div>
           ))
@@ -346,7 +434,7 @@ const Goals: React.FC<GoalsProps> = ({ user }) => {
                     type="number" 
                     className="form-input stake-input" 
                     placeholder="Amount" 
-                    min="1" 
+                    min="0" 
                     name="stake"
                     value={newGoal.stake || ''}
                     onChange={handleInputChange}
@@ -357,9 +445,58 @@ const Goals: React.FC<GoalsProps> = ({ user }) => {
                   This amount will be staked towards your goal. You'll get it back with interest if you succeed.
                 </div>
               </div>
-              
+            
               <button type="submit" className="submit-btn">Create Goal</button>
             </form>
+          </div>
+        </div>
+      )}
+      
+      {/* Transaction Modal */}
+      {showTransaction && (
+        <div className="modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Confirm Goal Creation</h2>
+              <button className="close-btn" onClick={() => setShowTransaction(false)}>&times;</button>
+            </div>
+            
+            <div className="transaction-details">
+              <p>You're about to create a new goal:</p>
+              <div className="transaction-info">
+                <div className="transaction-item">
+                  <span className="label">Goal:</span>
+                  <span className="value">{transactionData?.title}</span>
+                </div>
+                <div className="transaction-item">
+                  <span className="label">Stake:</span>
+                  <span className="value">{transactionData?.stake} GC</span>
+                </div>
+                <div className="transaction-item">
+                  <span className="label">Transaction Fee:</span>
+                  <span className="value">0 ETH (Test)</span>
+                </div>
+              </div>
+              
+              <div className="transaction-action">
+                <Transaction
+                  calls={calls}
+                  onSuccess={handleTransactionSuccess}
+                  onError={handleTransactionError}
+                >
+                  <TransactionButton className="submit-btn" />
+                  <TransactionStatus>
+                    <TransactionStatusAction />
+                    <TransactionStatusLabel />
+                  </TransactionStatus>
+                  <TransactionToast className="transaction-toast">
+                    <TransactionToastIcon />
+                    <TransactionToastLabel />
+                    <TransactionToastAction />
+                  </TransactionToast>
+                </Transaction>
+              </div>
+            </div>
           </div>
         </div>
       )}

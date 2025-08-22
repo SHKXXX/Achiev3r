@@ -159,7 +159,7 @@ export default function App() {
         </header>
 
         <main className="flex-1">
-          {activeTab === "home" && <Home setActiveTab={setActiveTab} />}
+          {activeTab === "home" && <Home setActiveTab={setActiveTab} user={user}/>}
           {activeTab === "community" && <Community setActiveTab={setActiveTab} user={user}/>}
             {activeTab === "goals" && (<Goals title="My Goals" initialTab="mine"  user={user}/>)}
         </main>
