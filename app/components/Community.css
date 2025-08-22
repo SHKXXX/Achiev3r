@@ -1,3 +1,4 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 * {
   margin: 0;
   padding: 0;
@@ -184,6 +185,16 @@
   gap: 5px;
   cursor: pointer;
 }
+
+.share-btn .fa-heart {
+  color: #888; /* default grey */
+  transition: color 0.3s ease;
+}
+
+.share-btn .fa-heart.liked {
+  color: #e65c5c; /* red when liked */
+}
+
 
 .bottom-nav {
   position: fixed;

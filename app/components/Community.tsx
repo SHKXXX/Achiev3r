@@ -18,35 +18,34 @@ interface Goal {
   isUserGoal?: boolean;
   isFollowing?: boolean;
   userId?: string;
+  likes?: number;
+  likedByUser?: boolean;
 }
 
 interface CommunityProps {
-  user?: any; // You might want to define a proper user type
+  user?: any;
 }
 
 const Community: React.FC<CommunityProps> = ({ user }) => {
   const [activeTab, setActiveTab] = useState<string>('others');
   const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const address  = user?.fid;
+  const address = user?.fid;
   const userId = user?.id || address;
 
+  // Add Font Awesome to the document head
   useEffect(() => {
-    loadGoals(activeTab);
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+    document.head.appendChild(link);
     
-    const handleScroll = () => {
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      const scrolled = window.scrollY;
-      
-      if (scrolled > scrollable - 100) {
-        console.log("Load more goals...");
-      }
+    return () => {
+      document.head.removeChild(link);
     };
+  }, []);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeTab, userId]);
-
+  // Define loadGoals function before it's used
   const loadGoals = async (tab: string) => {
     setIsLoading(true);
     
@@ -80,6 +79,37 @@ const Community: React.FC<CommunityProps> = ({ user }) => {
     }
   };
 
+  useEffect(() => {
+    loadGoals(activeTab);
+    
+    const handleScroll = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const scrolled = window.scrollY;
+      
+      if (scrolled > scrollable - 100) {
+        console.log("Load more goals...");
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeTab, userId]);
+
+  // Mock API handler for likes
+  const mockLikeGoal = async (goalId: string, userId: string, action: 'like' | 'unlike') => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Simulate random success/failure for testing
+    const shouldSucceed = Math.random() > 0.3; // 70% success rate
+    
+    if (!shouldSucceed) {
+      throw new Error('Mock API failure');
+    }
+    
+    return { success: true, action };
+  };
+  // Rest of your functions (fetchCommunityGoals, fetchUserGoals, etc.)
   const fetchCommunityGoals = async (): Promise<Goal[]> => {
     try {
       const response = await fetch('/api/goals/community');
@@ -125,7 +155,7 @@ const Community: React.FC<CommunityProps> = ({ user }) => {
 
   const formatGoalForDisplay = (goal: any, isUserGoal: boolean = false, isFollowing: boolean = false): Goal => {
     const progress = Math.floor(((goal.currentAmount ?? 0) / (goal.goalAmount ?? 1)) * 100);
-    const endDate = goal.endDate ? new Date(goal.endDate) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // Default 30 days if no end date
+    const endDate = goal.endDate ? new Date(goal.endDate) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
     
     return {
       id: goal.id,
@@ -136,16 +166,85 @@ const Community: React.FC<CommunityProps> = ({ user }) => {
       stake: goal.goalAmount || 0,
       endDate: `By ${endDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long' })}`,
       timeLeft: calculateDaysLeft(endDate.toISOString()) + ' Days Left',
-      winChance: isUserGoal ? Math.min(100, progress + 20) : undefined, // Example calculation
-      potentialReward: isFollowing ? Math.floor((goal.goalAmount || 0) * 0.1) : undefined, // Example: 10% reward
+      winChance: isUserGoal ? Math.min(100, progress + 20) : undefined,
+      potentialReward: isFollowing ? Math.floor((goal.goalAmount || 0) * 0.1) : undefined,
       isUserGoal,
       isFollowing,
-      userId: goal.userId
+      userId: goal.userId,
+      likes: goal.likes || 0,
+      likedByUser: goal.likedByUser || false
     };
   };
+  
+  const handleLikeGoal = async (goalId: string) => {
+  try {
+    // Find the goal to get current like status
+    const goal = goals.find(g => g.id === goalId);
+    if (!goal) return;
+    
+    const currentlyLiked = goal.likedByUser;
+    const currentLikes = goal.likes || 0;
+    
+    // Optimistically update UI
+    setGoals(prevGoals =>
+      prevGoals.map(goal => {
+        if (goal.id === goalId) {
+          return {
+            ...goal,
+            likedByUser: !currentlyLiked,
+            likes: currentlyLiked ? currentLikes - 1 : currentLikes + 1,
+          };
+        }
+        return goal;
+      })
+    );
 
+    // Use mock API for testing
+    await mockLikeGoal(goalId, userId, currentlyLiked ? 'unlike' : 'like');
+    
+    // If you want to use a real API later, uncomment this:
+    /*
+    const response = await fetch('/api/goals/like', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        goalId, 
+        userId,
+        action: currentlyLiked ? 'unlike' : 'like' 
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update like');
+    }
+    */
+    
+  } catch (error) {
+    console.error('Error liking goal:', error);
+    
+    // Revert the optimistic update on error
+    setGoals(prevGoals =>
+      prevGoals.map(goal => {
+        if (goal.id === goalId) {
+          // Find the original goal to revert to its previous state
+          const originalGoal = goals.find(g => g.id === goalId);
+          return {
+            ...goal,
+            likedByUser: originalGoal?.likedByUser,
+            likes: originalGoal?.likes,
+          };
+        }
+        return goal;
+      })
+    );
+    
+    alert('Error liking goal. Please try again.');
+  }
+};
+
+      // API request to update likes
+      
   const getSampleGoals = (tab: string): Goal[] => {
-    // Your existing sample data logic
     switch(tab) {
       case 'others':
         return [
@@ -157,9 +256,10 @@ const Community: React.FC<CommunityProps> = ({ user }) => {
             progress: 45,
             stake: 150,
             endDate: 'By 15th August',
-            timeLeft: '12 Days Left'
+            timeLeft: '12 Days Left',
+            likes: 5,
+            likedByUser: false
           },
-          // ... other sample goals
         ];
       case 'my':
         return [
@@ -173,9 +273,10 @@ const Community: React.FC<CommunityProps> = ({ user }) => {
             endDate: 'By 30th June',
             timeLeft: '5 Days Left',
             winChance: 85,
-            isUserGoal: true
+            isUserGoal: true,
+            likes: 3,
+            likedByUser: true
           },
-          // ... other sample goals
         ];
       case 'following':
         return [
@@ -189,7 +290,9 @@ const Community: React.FC<CommunityProps> = ({ user }) => {
             endDate: 'By 31st December',
             timeLeft: '18 Days Left',
             potentialReward: 25,
-            isFollowing: true
+            isFollowing: true,
+            likes: 7,
+            likedByUser: false
           }
         ];
       default:
@@ -274,7 +377,9 @@ const Community: React.FC<CommunityProps> = ({ user }) => {
         </div>
         
         <div className="tabs">
-          {/* Tabs remain the same */}
+          <div className={`tab ${activeTab === 'others' ? 'active' : ''}`}>Others' Goals</div>
+          <div className={`tab ${activeTab === 'my' ? 'active' : ''}`}>My Goals</div>
+          <div className={`tab ${activeTab === 'following' ? 'active' : ''}`}>Following</div>
         </div>
         
         <div className="loading-state">
@@ -367,13 +472,23 @@ const Community: React.FC<CommunityProps> = ({ user }) => {
               <div className="goal-footer">
                 <div className="time-left">{goal.timeLeft}</div>
                 {activeTab === 'others' && (
-                  <button 
-                    className="share-btn"
-                    onClick={() => handleFollowGoal(goal.id)}
-                  >
-                    <i className="fas fa-plus"></i> Follow
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button 
+                      className="share-btn"
+                      onClick={() => handleFollowGoal(goal.id)}
+                    >
+                      <i className="fas fa-plus"></i> Follow
+                    </button>
+                    
+                    <button 
+                      className="share-btn"
+                      onClick={() => handleLikeGoal(goal.id)}
+                    >
+                      <i className={`fas fa-heart ${goal.likedByUser ? 'liked' : ''}`}></i> {goal.likes || 0}
+                    </button>
+                  </div>
                 )}
+
                 {activeTab === 'my' && goal.winChance !== undefined && (
                   <div className="win-chance">Win Chance: {goal.winChance}%</div>
                 )}
