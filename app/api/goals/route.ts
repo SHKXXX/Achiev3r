@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-
+/*
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const goalId = params.id;
@@ -83,3 +83,4 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ error: "Failed to share goal" }, { status: 500 });
   }
 }
+*/
