@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String       @id @default(cuid())
+  fid          String       @unique
+  username     String?
+  profileImage String?
+  createdAt    DateTime     @default(now())
+
+  // back-relations
+  goals        Goal[]       // links to Goal.user
+  posts        Post[]       // links to Post.user
+  participants Participant[] // links to Participant.user
+}
+
+
+model Goal {
+  id            String        @id @default(cuid())
+  userId        String
+  title         String
+  description   String?
+  category      GoalCategory
+  goalAmount    Float?
+  currentAmount Float?
+  startDate     DateTime      @default(now())
+  endDate       DateTime?
+  isCompleted   Boolean       @default(false)
+  prizeAmount   Float?
+  prizeClaimed  Boolean       @default(false)
+  verifications Verification[]
+  createdAt     DateTime      @default(now())
+
+  user          User          @relation(fields: [userId], references: [id])
+}
+
+model Verification {
+  id        String              @id @default(cuid())
+  goalId    String
+  date      DateTime            @default(now())
+  status    VerificationStatus
+  notes     String?
+  votes     Vote[]
+
+  goal      Goal                @relation(fields: [goalId], references: [id])
+}
+
+model Vote {
+  id             String       @id @default(cuid())
+  verificationId String
+  participantId  String
+  value          VoteValue    // PASS or FAIL
+
+  verification   Verification @relation(fields: [verificationId], references: [id])
+  participant    Participant  @relation(fields: [participantId], references: [id])
+
+  @@unique([verificationId, participantId]) // prevent duplicate votes
+}
+
+model Post {
+  id           String        @id @default(cuid())
+  userId       String
+  content      String
+  category     PostCategory
+  prizeAmount  Float?
+  createdAt    DateTime      @default(now())
+  participants Participant[]
+
+  user         User          @relation(fields: [userId], references: [id])
+}
+
+model Participant {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  joinedAt  DateTime @default(now())
+  reward    Float?
+
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  votes     Vote[]
+}
+
+enum GoalCategory {
+  FITNESS
+  STUDY
+  SLEEP
+  OTHER
+}
+
+enum PostCategory {
+  FITNESS
+  STUDY
+  SLEEP
+  OTHER
+}
+
+enum VerificationStatus {
+  PENDING
+  PASSED
+  FAILED
+}
+
+enum VoteValue {
+  PASS
+  FAIL
+}

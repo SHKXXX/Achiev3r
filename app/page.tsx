@@ -11,6 +11,9 @@ import {
   Address,
   Avatar,
   EthBalance,
+  getAddress,
+  getName,
+  getAvatar,
 } from "@coinbase/onchainkit/identity";
 import {
   ConnectWallet,
@@ -19,28 +22,88 @@ import {
   WalletDropdownDisconnect,
 } from "@coinbase/onchainkit/wallet";
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { Button } from "./components/DemoComponents";
-import { Icon } from "./components/DemoComponents";
-import { Home } from "./components/DemoComponents";
+import { useAccount } from "wagmi"; // to track wallet connection
+import { Button, Icon } from "./components/DemoComponents";
 import { Features } from "./components/DemoComponents";
+import Goals  from "./components/Goals";
+import Home  from "./components/Home";
+import Community  from "./components/Community";
+import type { User } from '../lib/generated/prisma'; // adjust path if needed
 
 export default function App() {
   const { setFrameReady, isFrameReady, context } = useMiniKit();
+  const { address: walletAddress } = useAccount(); // connected wallet
   const [frameAdded, setFrameAdded] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
 
   const addFrame = useAddFrame();
   const openUrl = useOpenUrl();
-
+  const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     if (!isFrameReady) {
       setFrameReady();
     }
   }, [setFrameReady, isFrameReady]);
 
+  useEffect(() => {
+    const fetchAndSaveUser = async () => {
+      if (!walletAddress) return;
+
+      // Get ENS name
+      const username = await getName({ address: walletAddress, chain: { id: 8453, name: "Base" },}).catch(() => undefined);
+      console.log("Wallet:", walletAddress);  
+      console.log("Fetched name:", username); 
+      // Get avatar (only if username exists)
+      const profileImage = username
+        ? await getAvatar({
+            ensName: username,
+            chain: { id: 8453, name: "Base" }, // Base chain
+          }).catch(() => undefined)
+        : undefined;
+
+      // Send to backend
+      fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fid: walletAddress,
+          username,
+          profileImage,
+        }),
+      })
+        .then(res => res.json())
+        .then(data => console.log("User saved/fetched:", data.user))
+        .catch(err => console.error("Error saving user:", err));
+    };
+
+    fetchAndSaveUser();
+  }, [walletAddress]);
+
+  useEffect(() => {
+  const initUserSession = async () => {
+    if (!walletAddress) return;
+
+    try {
+      const res = await fetch("/api/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ walletAddress }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUser(data.user); // store user in state
+      }
+    } catch (err) {
+      console.error("Failed to initialize session", err);
+    }
+  };
+
+  initUserSession();
+}, [walletAddress]);
+
   const handleAddFrame = useCallback(async () => {
-    const frameAdded = await addFrame();
-    setFrameAdded(Boolean(frameAdded));
+    const added = await addFrame();
+    setFrameAdded(Boolean(added));
   }, [addFrame]);
 
   const saveFrameButton = useMemo(() => {
@@ -97,7 +160,8 @@ export default function App() {
 
         <main className="flex-1">
           {activeTab === "home" && <Home setActiveTab={setActiveTab} />}
-          {activeTab === "features" && <Features setActiveTab={setActiveTab} />}
+          {activeTab === "community" && <Community setActiveTab={setActiveTab} user={user}/>}
+            {activeTab === "goals" && (<Goals title="My Goals" initialTab="mine"  user={user}/>)}
         </main>
 
         <footer className="mt-2 pt-4 flex justify-center">
@@ -111,6 +175,36 @@ export default function App() {
           </Button>
         </footer>
       </div>
+       <nav className="fixed bottom-3 left-0 right-0">
+        <div className="w-full max-w-md mx-auto px-4">
+          <div className="bg-[var(--app-card-bg)] backdrop-blur-md border border-[var(--app-card-border)] rounded-2xl shadow-lg p-2 flex justify-around">
+            <button
+              type="button"
+              onClick={() => setActiveTab("home")}
+              className={`flex flex-col items-center px-3 py-1 rounded-xl ${activeTab === "home" ? "text-[var(--app-accent)]" : "text-[var(--app-foreground-muted)]"}`}
+            >
+              <Icon name="home" />
+              <span className="text-xs mt-1">Home</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("community")}
+              className={`flex flex-col items-center px-3 py-1 rounded-xl ${activeTab === "community" ? "text-[var(--app-accent)]" : "text-[var(--app-foreground-muted)]"}`}
+            >
+              <Icon name="users" />
+              <span className="text-xs mt-1">Community</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("goals")}
+              className={`flex flex-col items-center px-3 py-1 rounded-xl ${activeTab === "goals" ? "text-[var(--app-accent)]" : "text-[var(--app-foreground-muted)]"}`}
+            >
+              <Icon name="target" />
+              <span className="text-xs mt-1">Goals</span>
+            </button>
+          </div>
+        </div>
+      </nav>
     </div>
   );
 }
