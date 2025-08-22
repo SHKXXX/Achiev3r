@@ -1,0 +1,30 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjEyNDkyMDYsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhkZTZCNTZmZTNhODk1MTA2MjQ2YkEwODFFMjhBNDMyY2Q0MzYyZDNFIn0",
+    "payload": "eyJkb21haW4iOiJhY2hpZXYzci52ZXJjZWwuYXBwIn0",
+    "signature": "MHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwNDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwYzAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAxMjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAxNzAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDFmMWY2ZTQ3MDE5Nzc2YjY0OTJjNTQ2ODY1MDRkMzZjMjFlYmE1ODdmOWZlNzA4ZTFkYmZmN2EwYmVlOTcwMzUyMGU3YWViNDkzOGQzZDk3YmQxYzNhMmM4Nzg4ZDNjZDI5NDdjZDlmOGYzZjdiZjc5MThhZmUwNDczMzM2YmMwNTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMjVmMTk4MDg2YjJkYjE3MjU2NzMxYmM0NTY2NzNiOTZiY2VmMjNmNTFkMWZiYWNkZDdjNDM3OWVmNjU0NjU1NzJmMWQwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwOGE3YjIyNzQ3OTcwNjUyMjNhMjI3NzY1NjI2MTc1NzQ2ODZlMmU2NzY1NzQyMjJjMjI2MzY4NjE2YzZjNjU2ZTY3NjUyMjNhMjI0ZTZkNGY0YzM2NTQ2NDcyNGM2NjU3Njg0YTU4MzczMjQ2MzU3NDUyNmQ0ZDU2NDYzNDY0NjY3NDYyMzM2MzRlNTUzNTVmNTUzNDcwNDkzOTM3NGYzODIyMmMyMjZmNzI2OTY3Njk2ZTIyM2E2NjYxNmM3MzY1N2QwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMA"
+  },
+  "baseBuilder": {
+    "allowedAddresses": ["0xtJD8zOCViMbPaOV0RTS8F3mPZRnaq4"]
+  },
+  "frame": {
+    "version": "1",
+    "name": "my-minikit-app",
+    "homeUrl": "https://achiev3r.vercel.app",
+    "iconUrl": "https://achiev3r.vercel.app/logo.png",
+    "splashImageUrl": "https://achiev3r.vercel.app/splash.png",
+    "splashBackgroundColor": "#000000",
+    "webhookUrl": "https://achiev3r.vercel.app/api/webhook",
+    "subtitle": "",
+    "description": "",
+    "screenshotUrls": [],
+    "primaryCategory": "social",
+    "tags": ["miniapp", "achiev3r"],
+    "heroImageUrl": "https://achiev3r.vercel.app/hero.png",
+    "tagline": "",
+    "ogTitle": "my-minikit-app",
+    "ogDescription": "",
+    "ogImageUrl": "https://achiev3r.vercel.app/hero.png",
+    "noindex": false
+  }
+}
