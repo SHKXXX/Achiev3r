@@ -112,7 +112,7 @@
             color: #666;
             font-size: 14px;
             margin-bottom: 16px;
-            padding-left: 52px; /* Align with title */
+            padding-left: 52px;
         }
         
         .progress-container {
@@ -225,7 +225,7 @@
             font-size: 24px;
         }
         
-        /* Modal styles for goal details */
+        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -269,76 +269,90 @@
             color: #999;
         }
         
-        .detail-item {
+        .form-group {
             margin-bottom: 16px;
         }
         
-        .detail-label {
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
             font-size: 14px;
-            color: #666;
-            margin-bottom: 4px;
         }
         
-        .detail-value {
-            font-size: 16px;
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #eef0f8;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .submit-btn {
+            background-color: #3a57e8;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        
+        .category-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .category-tag {
+            padding: 8px 12px;
+            background-color: #f2f6ff;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .category-tag.selected {
+            background-color: #3a57e8;
+            color: white;
+        }
+        
+        .stake-amount {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+        }
+        
+        .stake-prefix {
+            padding: 12px;
+            background-color: #f2f6ff;
+            border: 1px solid #eef0f8;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
             font-weight: 600;
         }
         
-        .pool-info {
-            display: flex;
-            justify-content: space-between;
-            background-color: #f2f6ff;
-            padding: 12px;
-            border-radius: 12px;
-            margin: 16px 0;
-        }
-        
-        .pool-item {
-            text-align: center;
-        }
-        
-        .pool-amount {
-            font-size: 18px;
-            font-weight: 700;
-            color: #3a57e8;
-        }
-        
-        .pool-label {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .progress-circle {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto;
-            position: relative;
-        }
-        
-        .circle-bg {
-            fill: none;
-            stroke: #eef0f8;
-            stroke-width: 8;
-        }
-        
-        .circle-progress {
-            fill: none;
-            stroke: #3a57e8;
-            stroke-width: 8;
-            stroke-linecap: round;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-            transition: stroke-dashoffset 0.3s;
-        }
-        
-        .circle-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px;
-            font-weight: 700;
-            color: #3a57e8;
+        .stake-input {
+            border-radius: 0 12px 12px 0;
+            flex: 1;
         }
     </style>
 </head>
@@ -416,61 +430,102 @@
             </div>
         </div>
         
-        <div class="goal-card" data-goal-id="3">
-            <div class="goal-header">
-                <div class="goal-user">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
-                    <div class="goal-info">
-                        <div class="goal-title">Read 10 Books</div>
-                        <div class="goal-date">By 31st December</div>
-                    </div>
-                </div>
-                <div class="goal-stake">
-                    <i class="fas fa-coins"></i> 150 GC
-                </div>
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <div class="empty-icon">
+                <i class="fas fa-bullseye"></i>
             </div>
-            <div class="goal-category">Education</div>
-            <div class="progress-container">
-                <div class="progress-info">
-                    <div class="progress-text">Progress</div>
-                    <div class="progress-percent">40%</div>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 40%"></div>
-                </div>
-            </div>
-            <div class="goal-footer">
-                <div class="time-left">120 Days Left</div>
-                <button class="share-btn">
-                    <i class="fas fa-share-alt"></i> Share
-                </button>
-            </div>
+            <p>You don't have any goals yet</p>
+            <p>Create your first goal to get started!</p>
         </div>
     </div>
     
-    <div class="add-goal-btn">
+    <div class="add-goal-btn" id="add-goal-btn">
         <i class="fas fa-plus add-icon"></i>
     </div>
     
     <div class="bottom-nav">
-        <div class="nav-item">
-            <div class="nav-icon"><i class="fas fa-home"></i></div>
-            <div>Home</div>
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <a href="home.html">
+                    <div class="nav-icon"><i class="fas fa-home"></i></div>
+                    <div>Home</div>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="community.html">
+                    <div class="nav-icon"><i class="fas fa-users"></i></div>
+                    <div>Community</div>
+                </a>
+            </div>
+            <div class="nav-item active">
+                <a href="goals.html"> 
+                    <div class="nav-icon"><i class="fas fa-bullseye"></i></div>
+                    <div>Goals</div>
+                </a>
+            </div>
         </div>
-        <div class="nav-item">
-            <a href="community.html">
-                <div class="nav-icon"><i class="fas fa-users"></i></div>
-                <div>Community</div>
-            </a>
-        </div>
-        <div class="nav-item active">
-            <div class="nav-icon"><i class="fas fa-bullseye"></i></div>
-            <div>Goals</div>
+    </div>
+    
+    <!-- Add Goal Modal -->
+    <div class="modal" id="add-goal-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Goal</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            
+            <form id="goal-form">
+                <div class="form-group">
+                    <label class="form-label">Goal Title</label>
+                    <input type="text" class="form-input" placeholder="e.g., Lose 5kg, Read 10 books" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" placeholder="Describe your goal in detail..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <div class="category-tags">
+                        <div class="category-tag" data-category="fitness">Fitness</div>
+                        <div class="category-tag" data-category="sleep">Sleep</div>
+                        <div class="category-tag" data-category="study">Study</div>
+                        <div class="category-tag" data-category="other">Other</div>
+                    </div>
+                    <input type="hidden" id="selected-category" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-input" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Stake Amount</label>
+                    <div class="stake-amount">
+                        <span class="stake-prefix">GC</span>
+                        <input type="number" class="form-input stake-input" placeholder="Amount" min="1" required>
+                    </div>
+                    <div class="form-label" style="font-size: 12px; font-weight: normal; margin-top: 8px;">
+                        This amount will be staked towards your goal. You'll get it back with interest if you succeed.
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Create Goal</button>
+            </form>
         </div>
     </div>
     
     <!-- Goal Detail Modal -->
-    <div class="modal" id="goalModal">
+    <div class="modal" id="goal-modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Goal Details</h2>
@@ -526,27 +581,154 @@
     </div>
 
     <script>
-        // Open goal details modal when a goal card is clicked
-        document.querySelectorAll('.goal-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                // Don't open modal if share button was clicked
-                if (e.target.closest('.share-btn')) return;
-                
-                const goalId = card.getAttribute('data-goal-id');
-                openGoalModal(goalId);
+        // DOM Elements
+        const addGoalBtn = document.getElementById('add-goal-btn');
+        const addGoalModal = document.getElementById('add-goal-modal');
+        const goalModal = document.getElementById('goal-modal');
+        const goalForm = document.getElementById('goal-form');
+        const closeBtns = document.querySelectorAll('.close-btn');
+        const categoryTags = document.querySelectorAll('.category-tag');
+        const selectedCategory = document.getElementById('selected-category');
+        const emptyState = document.getElementById('empty-state');
+        const goalsList = document.querySelector('.goals-list');
+        
+        // Show empty state if no goals
+        if (document.querySelectorAll('.goal-card').length === 0) {
+            emptyState.style.display = 'block';
+        }
+        
+        // Open add goal modal
+        addGoalBtn.addEventListener('click', () => {
+            addGoalModal.style.display = 'flex';
+        });
+        
+        // Close modals
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                addGoalModal.style.display = 'none';
+                goalModal.style.display = 'none';
             });
         });
         
-        // Close modal when close button is clicked
-        document.querySelector('.close-btn').addEventListener('click', () => {
-            document.getElementById('goalModal').style.display = 'none';
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === addGoalModal) {
+                addGoalModal.style.display = 'none';
+            }
+            if (e.target === goalModal) {
+                goalModal.style.display = 'none';
+            }
         });
         
-        // Close modal when clicking outside the modal content
-        window.addEventListener('click', (e) => {
-            if (e.target === document.getElementById('goalModal')) {
-                document.getElementById('goalModal').style.display = 'none';
-            }
+        // Category selection
+        categoryTags.forEach(tag => {
+            tag.addEventListener('click', () => {
+                // Remove selected class from all tags
+                categoryTags.forEach(t => t.classList.remove('selected'));
+                
+                // Add selected class to clicked tag
+                tag.classList.add('selected');
+                
+                // Set the hidden input value
+                selectedCategory.value = tag.getAttribute('data-category');
+            });
+        });
+        
+        // Form submission
+        goalForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form values
+            const title = goalForm.querySelector('input[type="text"]').value;
+            const description = goalForm.querySelector('textarea').value;
+            const startDate = goalForm.querySelector('input[type="date"]:first-of-type').value;
+            const endDate = goalForm.querySelector('input[type="date"]:last-of-type').value;
+            const stake = goalForm.querySelector('input[type="number"]').value;
+            const category = selectedCategory.value;
+            
+            // Format dates for display
+            const startDateFormatted = formatDate(new Date(startDate));
+            const endDateFormatted = formatDate(new Date(endDate));
+            
+            // Create new goal card
+            const newGoalCard = document.createElement('div');
+            newGoalCard.className = 'goal-card';
+            newGoalCard.setAttribute('data-goal-id', Date.now());
+            
+            newGoalCard.innerHTML = `
+                <div class="goal-header">
+                    <div class="goal-user">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="user-avatar" alt="User avatar">
+                        <div class="goal-info">
+                            <div class="goal-title">${title}</div>
+                            <div class="goal-date">By ${endDateFormatted}</div>
+                        </div>
+                    </div>
+                    <div class="goal-stake">
+                        <i class="fas fa-coins"></i> ${stake} GC
+                    </div>
+                </div>
+                <div class="goal-category">${capitalizeFirstLetter(category)}</div>
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <div class="progress-text">Progress</div>
+                        <div class="progress-percent">0%</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="goal-footer">
+                    <div class="time-left">${calculateDaysLeft(endDate)} Days Left</div>
+                    <button class="share-btn">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            `;
+            
+            // Add click event to new goal card
+            newGoalCard.addEventListener('click', (e) => {
+                if (e.target.closest('.share-btn')) return;
+                openGoalModal(newGoalCard.getAttribute('data-goal-id'));
+            });
+            
+            // Add share event to new goal card
+            newGoalCard.querySelector('.share-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                alert('Sharing this goal with the community for monitoring!');
+            });
+            
+            // Insert new goal card at the top of the list
+            goalsList.insertBefore(newGoalCard, goalsList.firstChild);
+            
+            // Hide empty state
+            emptyState.style.display = 'none';
+            
+            // Close modal and reset form
+            addGoalModal.style.display = 'none';
+            goalForm.reset();
+            
+            // Reset category selection
+            categoryTags.forEach(t => t.classList.remove('selected'));
+            selectedCategory.value = '';
+            
+            alert('Goal created successfully!');
+        });
+        
+        // Open goal details modal when a goal card is clicked
+        document.querySelectorAll('.goal-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.share-btn')) return;
+                openGoalModal(card.getAttribute('data-goal-id'));
+            });
+        });
+        
+        // Share button functionality
+        document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                alert('Sharing this goal with the community for monitoring!');
+            });
         });
         
         // Function to open goal modal with data
@@ -581,18 +763,17 @@
                         description: 'Design a complete mobile app interface with 20+ screens including user flows and prototypes.'
                     };
                     break;
-                case '3':
+                default:
                     goalData = {
-                        title: 'Read 10 Books',
-                        category: 'Education',
-                        startDate: 'January 1, 2023',
-                        endDate: 'December 31, 2023',
-                        progress: 40,
-                        initialStake: '150 GC',
-                        currentValue: '165 GC',
-                        description: 'Read 10 books across different genres including fiction, non-fiction, and self-improvement.'
+                        title: 'New Goal',
+                        category: 'Other',
+                        startDate: 'June 25, 2023',
+                        endDate: 'July 25, 2023',
+                        progress: 0,
+                        initialStake: '50 GC',
+                        currentValue: '50 GC',
+                        description: 'This is a newly created goal.'
                     };
-                    break;
             }
             
             // Update modal with goal data
@@ -612,22 +793,33 @@
             document.querySelectorAll('.pool-amount')[1].textContent = goalData.currentValue;
             
             // Show the modal
-            document.getElementById('goalModal').style.display = 'flex';
+            goalModal.style.display = 'flex';
         }
         
-        // Share button functionality
-        document.querySelectorAll('.share-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent triggering the card click event
-                alert('Sharing this goal with the community for monitoring!');
-                // In a real app, this would trigger a share dialog or API call
-            });
-        });
+        // Helper functions
+        function formatDate(date) {
+            const options = { day: 'numeric', month: 'long' };
+            return date.toLocaleDateString('en-US', options);
+        }
         
-        // Add new goal button
-        document.querySelector('.add-goal-btn').addEventListener('click', () => {
-            alert('Add new goal functionality would open here!');
-            // In a real app, this would open a form to create a new goal
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        
+        function calculateDaysLeft(endDate) {
+            const today = new Date();
+            const end = new Date(endDate);
+            const diffTime = end - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays > 0 ? diffDays : 0;
+        }
+        
+        // Set minimum date for end date to be after start date
+        const startDateInput = document.querySelector('input[type="date"]:first-of-type');
+        const endDateInput = document.querySelector('input[type="date"]:last-of-type');
+        
+        startDateInput.addEventListener('change', () => {
+            endDateInput.min = startDateInput.value;
         });
     </script>
 </body>

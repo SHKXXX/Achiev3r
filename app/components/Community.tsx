@@ -102,8 +102,21 @@ function GoalCard({ goal, mode }: { goal: Goal; mode: CommunityTab }) {
   );
 }
 
-export function Community({ initialTab = "all" as CommunityTab, title = "Community" }: { initialTab?: CommunityTab; title?: string }) {
+export function Community({ initialTab = "all" as CommunityTab, title = "Community", htmlSrc }: { initialTab?: CommunityTab; title?: string; htmlSrc?: string }) {
   const [tab, setTab] = useState<CommunityTab>(initialTab);
+
+  if (htmlSrc) {
+    return (
+      <div className="animate-fade-in">
+        <h2 className="text-xl font-semibold mb-4">{title}</h2>
+        <iframe
+          src={htmlSrc}
+          title={title}
+          className="w-full h-[80vh] rounded-xl border border-[var(--app-card-border)]"
+        />
+      </div>
+    );
+  }
 
   const allGoals = useMemo<Goal[]>(
     () => [

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoalTracker - Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: #333;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3a57e8;
+        }
+        
+        .profile-info h2 {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        
+        .profile-info p {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .wallet {
+            background-color: #3a57e8;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .date-section {
+            background: linear-gradient(135deg, #3a57e8, #6c8eff);
+            border-radius: 16px;
+            padding: 16px;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(58, 87, 232, 0.3);
+            text-align: center;
+        }
+        
+        .today-date {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .day-of-week {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+        
+        .notes-section {
+            background-color: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .notes-textarea {
+            width: 100%;
+            min-height: 100px;
+            border: 1px solid #eef0f8;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+        
+        .save-btn {
+            background-color: #3a57e8;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .energy-section {
+            background-color: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .energy-slider-container {
+            margin: 20px 0;
+        }
+        
+        .energy-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .energy-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .energy-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #e65c5c, #f2c94c, #6fcf97);
+            outline: none;
+        }
+        
+        .energy-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3a57e8;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .energy-value {
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin-top: 12px;
+            color: #3a57e8;
+        }
+        
+        .ai-suggestion-btn {
+            background-color: #f2f6ff;
+            color: #3a57e8;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            width: 100%;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        
+        .coin-growth-section {
+            background-color: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 80px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .coin-chart {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 20px 0;
+            border-bottom: 1px solid #eef0f8;
+            margin-bottom: 16px;
+        }
+        
+        .chart-bar {
+            width: 30px;
+            background: linear-gradient(to top, #3a57e8, #6c8eff);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .chart-value {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #3a57e8;
+        }
+        
+        .growth-info {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .growth-item {
+            text-align: center;
+        }
+        
+        .growth-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #3a57e8;
+        }
+        
+        .growth-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 16px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: #3a57e8;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .ai-suggestion-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .suggestion-list {
+            list-style-type: none;
+        }
+        
+        .suggestion-list li {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .suggestion-list li:before {
+            content: "•";
+            color: #3a57e8;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="profile-section">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" class="profile-pic" alt="Profile">
+            <div class="profile-info">
+                <h2>Sarah Johnson</h2>
+                <p>Welcome back!</p>
+            </div>
+        </div>
+        <div class="wallet">
+            <i class="fas fa-wallet"></i>
+            <span>420 GC</span>
+        </div>
+    </div>
+    
+    <div class="date-section">
+        <div class="today-date" id="current-date">June 25, 2023</div>
+        <div class="day-of-week" id="day-of-week">Sunday</div>
+    </div>
+    
+    <div class="notes-section">
+        <div class="section-title">
+            <i class="fas fa-sticky-note"></i>
+            <span>Daily Notes</span>
+        </div>
+        <textarea class="notes-textarea" placeholder="Write your thoughts, ideas, or plans for today...">Need to complete my workout routine and work on the app design for at least 2 hours.</textarea>
+        <button class="save-btn">
+            <i class="fas fa-save"></i> Save Notes
+        </button>
+    </div>
+    
+    <div class="energy-section">
+        <div class="section-title">
+            <i class="fas fa-battery-full"></i>
+            <span>Energy Level Today</span>
+        </div>
+        <div class="energy-slider-container">
+            <div class="energy-labels">
+                <span class="energy-label">Low</span>
+                <span class="energy-label">Medium</span>
+                <span class="energy-label">High</span>
+            </div>
+            <input type="range" min="1" max="10" value="7" class="energy-slider" id="energy-slider">
+            <div class="energy-value" id="energy-value">7/10</div>
+        </div>
+        <button class="ai-suggestion-btn" id="ai-suggestion-btn">
+            <i class="fas fa-robot"></i> Get AI Suggestions
+        </button>
+    </div>
+    
+    <div class="coin-growth-section">
+        <div class="section-title">
+            <i class="fas fa-chart-line"></i>
+            <span>Your Goal Coin Growth</span>
+        </div>
+        <div class="coin-chart">
+            <div class="chart-bar" style="height: 70%;">
+                <span class="chart-value">100</span>
+                <span class="chart-bar-label">Mon</span>
+            </div>
+            <div class="chart-bar" style="height: 78%;">
+                <span class="chart-value">108</span>
+                <span class="chart-bar-label">Tue</span>
+            </div>
+            <div class="chart-bar" style="height: 85%;">
+                <span class="chart-value">115</span>
+                <span class="chart-bar-label">Wed</span>
+            </div>
+            <div class="chart-bar" style="height: 82%;">
+                <span class="chart-value">112</span>
+                <span class="chart-bar-label">Thu</span>
+            </div>
+            <div class="chart-bar" style="height: 90%;">
+                <span class="chart-value">120</span>
+                <span class="chart-bar-label">Fri</span>
+            </div>
+            <div class="chart-bar" style="height: 95%;">
+                <span class="chart-value">125</span>
+                <span class="chart-bar-label">Sat</span>
+            </div>
+            <div class="chart-bar" style="height: 100%;">
+                <span class="chart-value">130</span>
+                <span class="chart-bar-label">Sun</span>
+            </div>
+        </div>
+        <div class="growth-info">
+            <div class="growth-item">
+                <div class="growth-value">100 GC</div>
+                <div class="growth-label">Initial Stake</div>
+            </div>
+            <div class="growth-item">
+                <div class="growth-value">130 GC</div>
+                <div class="growth-label">Current Value</div>
+            </div>
+            <div class="growth-item">
+                <div class="growth-value">+30%</div>
+                <div class="growth-label">Growth</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <a href="home.html">
+                <div class="nav-icon"><i class="fas fa-home"></i></div>
+                <div>Home</div>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="community.html">
+                <div class="nav-icon"><i class="fas fa-users"></i></div>
+                <div>Community</div>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="goals.html">
+                <div class="nav-icon"><i class="fas fa-bullseye"></i></div>
+                <div>Goals</div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- AI Suggestion Modal -->
+    <div class="ai-suggestion-modal" id="ai-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Energy Suggestions</span>
+                </h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            
+            <p>Based on your energy level of <span id="modal-energy-value">7</span>/10, here are some suggestions to boost your energy:</p>
+            
+            <ul class="suggestion-list">
+                <li>Take a 10-minute walk outside to get some fresh air and sunlight</li>
+                <li>Drink a glass of water - dehydration often causes fatigue</li>
+                <li>Do 5 minutes of stretching to improve blood circulation</li>
+                <li>Listen to upbeat music for a quick mood and energy boost</li>
+                <li>Have a healthy snack like nuts or fruit for sustained energy</li>
+            </ul>
+            
+            <button class="save-btn" style="margin-top: 20px; width: 100%;">
+                <i class="fas fa-check"></i> Got it!
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Set current date
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const dayOptions = { weekday: 'long' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+        document.getElementById('day-of-week').textContent = now.toLocaleDateString('en-US', dayOptions);
+        
+        // Energy slider functionality
+        const energySlider = document.getElementById('energy-slider');
+        const energyValue = document.getElementById('energy-value');
+        const modalEnergyValue = document.getElementById('modal-energy-value');
+        
+        energySlider.addEventListener('input', () => {
+            const value = energySlider.value;
+            energyValue.textContent = `${value}/10`;
+            modalEnergyValue.textContent = value;
+            
+            // Change color based on value
+            if (value < 4) {
+                energyValue.style.color = '#e65c5c';
+            } else if (value < 7) {
+                energyValue.style.color = '#f2c94c';
+            } else {
+                energyValue.style.color = '#6fcf97';
+            }
+        });
+        
+        // AI Suggestion Modal
+        const aiSuggestionBtn = document.getElementById('ai-suggestion-btn');
+        const aiModal = document.getElementById('ai-modal');
+        const closeBtn = document.querySelector('.close-btn');
+        
+        aiSuggestionBtn.addEventListener('click', () => {
+            aiModal.style.display = 'flex';
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            aiModal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === aiModal) {
+                aiModal.style.display = 'none';
+            }
+        });
+        
+        // Save notes functionality
+        const saveBtn = document.querySelector('.save-btn');
+        const notesTextarea = document.querySelector('.notes-textarea');
+        
+        saveBtn.addEventListener('click', () => {
+            // In a real app, this would save to local storage or a database
+            saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            setTimeout(() => {
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Notes';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
