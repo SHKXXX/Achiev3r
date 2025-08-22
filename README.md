@@ -102,7 +102,7 @@ app/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd my-minikit-app
+   cd achiev3r
    ```
 
 2. **Install dependencies**

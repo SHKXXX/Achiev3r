@@ -9,7 +9,7 @@
   },
   "frame": {
     "version": "1",
-    "name": "my-minikit-app",
+    "name": "achiev3r",
     "homeUrl": "https://achiev3r.vercel.app",
     "iconUrl": "https://achiev3r.vercel.app/logo.png",
     "splashImageUrl": "https://achiev3r.vercel.app/splash.png",
@@ -22,7 +22,7 @@
     "tags": ["miniapp", "achiev3r"],
     "heroImageUrl": "https://achiev3r.vercel.app/hero.png",
     "tagline": "",
-    "ogTitle": "my-minikit-app",
+    "ogTitle": "achiev3r",
     "ogDescription": "",
     "ogImageUrl": "https://achiev3r.vercel.app/hero.png",
     "noindex": false

@@ -215,7 +215,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/zoes/my-minikit-app/lib/generated/prisma",
+      "value": "/Users/zoes/achiev3r/lib/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -229,7 +229,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/zoes/my-minikit-app/prisma/schema.prisma",
+    "sourceFilePath": "/Users/zoes/achiev3r/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
